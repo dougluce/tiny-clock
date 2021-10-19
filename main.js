@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, MenuItem } = require('electron')
+const { app, BrowserWindow, Menu, MenuItem, Tray} = require('electron')
 const path = require('path')
 const url = require('url')
 const Positioner = require('electron-positioner')
@@ -57,17 +57,28 @@ function createWindow () {
     win = null
     positioner = null
   })
-
 }
+let tray
+app.whenReady().then(() => {
+  tray = new Tray(path.join(__dirname, 'assets/icons/png/32x32.png'))
+  const contextMenu = Menu.buildFromTemplate([
+    { label: 'quit', click: function() { app.quit() }}
+  ])
+  tray.setToolTip('tiny clock')
+  tray.setContextMenu(contextMenu)
+})
 
 app.on('ready', createWindow)
-
-var menu = new Menu()
-menu.append(new MenuItem({ label: 'quit', click: function() { app.quit() }}))
 app.on("web-contents-created", (...[, webContents]) => {
   webContents.on("context-menu", (event, click) => {
     event.preventDefault()
     menu.popup(webContents)
   }, false)
+  // Move out of the way when hovered over
+  webContents.on('cursor-changed', function () {
+    win.hide()
+    setTimeout(function () {
+      win.show()
+    }, 2000)
+  })
 })
-
