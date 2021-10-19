@@ -1,15 +1,16 @@
 # tiny-clock
 
-> Just a tiny floating clock.
+Floating tiny clock.
 
-![demo](tiny-clock.gif)
+For use with auto-hiding menus. Floats just about where the iStat
+menus clock appears when re-hiding menus.
 
 ## Getting started
 
 Clone the repo.
 
 ```bash
-git clone https://github.com/stursby/tiny-clock.git
+git clone https://github.com/dougluce/tiny-clock.git
 ```
 
 Install dependencies
@@ -23,22 +24,12 @@ cd tiny clock && yarn
 Run the Electron app in Development
 
 ```bash
-yarn start
+ELECTRON_ENABLE_LOGGING=1 yarn start
 ```
 
 ### Build
 
 Build the app for macOS
 ```bash
-yarn build-mac
-```
-
-Build the app for Linux
-```bash
-yarn build-linux
-```
-
-Build the app for Windows
-```bash
-yarn build-windows
+yarn build
 ```

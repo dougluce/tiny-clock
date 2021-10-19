@@ -1,11 +1,7 @@
-const { app, BrowserWindow, Menu } = require('electron')
+const { app, BrowserWindow, Menu, MenuItem } = require('electron')
 const path = require('path')
 const url = require('url')
 const Positioner = require('electron-positioner')
-const isDev = require('electron-is-dev')
-const settings = require('electron-settings')
-
-const { positionSetting, themeSetting, showSecondsSetting } = settings.getAll()
 
 let positioner
 let win
@@ -26,37 +22,27 @@ function createWindow () {
     maximizable: false,
     minimizable: false,
     resizable: false,
-    skipTaskbar: false,
+    skipTaskbar: true, // false,
+    visibleOnAllWorkspaces: true,
     textAreasAreResizable: false,
     title: 'tiny clock',
-    transparent: true
+    transparent: true,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+      devTools: false
+    }
   })
 
-  function positionWin () {
-    let pos = settings.get('positionSetting')
-    positioner.move(pos)
+  async function positionWin () {
+    positioner.move('topRight')
     let [x, y] = win.getPosition()
-    if (pos === 'topLeft') {
-      x += 10
-      y += 5
-    } else if (pos === 'topRight') {
-      x -= 10
-      y += 5
-    } else if (pos === 'bottomLeft') {
-      x += 10
-      y -= 5
-    } else if (pos === 'bottomRight') {
-      x -= 10
-      y -= 5
-    }
+    x -= 78
+    y += 0
     win.setPosition(x, y)
   }
 
   positioner = new Positioner(win)
-  if (!positionSetting) {
-    settings.set('positionSetting', 'topRight')
-  }
-  settings.watch('positionSetting', positionWin)
   positionWin()
 
   win.loadURL(url.format({
@@ -64,83 +50,7 @@ function createWindow () {
     protocol: 'file:',
     slashes: true
   }))
-
-  const template = [{
-    role: 'window',
-    submenu: [{
-      role: 'about'
-    }, {
-      label: 'Choose Theme',
-      submenu: [{
-        type: 'radio',
-        label: 'Dark Theme',
-        checked: (themeSetting === 'dark') ? true : false,
-        click() {
-          win.webContents.send('changeTheme', 'dark')
-          settings.set('themeSetting', 'dark')
-        }
-      }, {
-        type: 'radio',
-        label: 'Light Theme',
-        checked: (themeSetting === 'light') ? true : false,
-        click() {
-          win.webContents.send('changeTheme', 'light')
-          settings.set('themeSetting', 'light')
-        }
-      }]
-    }, {
-      label: 'Choose Position',
-      submenu: [{
-        type: 'radio',
-        label: 'Top Left',
-        checked: (positionSetting === 'topLeft') ? true : false,
-        click() {
-          settings.set('positionSetting', 'topLeft')
-        }
-      }, {
-        type: 'radio',
-        label: 'Top Right',
-        checked: (positionSetting === 'topRight') ? true : false,
-        click() {
-          settings.set('positionSetting', 'topRight')
-        }
-      }, {
-        type: 'radio',
-        label: 'Bottom Left',
-        checked: (positionSetting === 'bottomLeft') ? true : false,
-        click() {
-          settings.set('positionSetting', 'bottomLeft')
-        }
-      }, {
-        type: 'radio',
-        label: 'Bottom Right',
-        checked: (positionSetting === 'bottomRight') ? true : false,
-        click() {
-          settings.set('positionSetting', 'bottomRight')
-        }
-      }]
-    }, {
-      label: 'Show Seconds',
-      type: 'checkbox',
-      checked: (showSecondsSetting !== undefined) ? showSecondsSetting : false,
-      click(menuItem) {
-        win.webContents.send('showSeconds', menuItem.checked)
-        const value = (menuItem.checked) ? true : false
-        settings.set('showSecondsSetting', value)
-      }
-    }, {
-      type: 'separator'
-    }, {
-      role: 'quit'
-    }]
-  }]
-  const menu = Menu.buildFromTemplate(template)
-  Menu.setApplicationMenu(menu)
-
-  if (isDev) {
-    win.webContents.openDevTools({ detach: true })
-  }
-
+  app.dock.hide()
   win.on('resize', positionWin)
 
   win.on('closed', () => {
@@ -152,30 +62,12 @@ function createWindow () {
 
 app.on('ready', createWindow)
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
+var menu = new Menu()
+menu.append(new MenuItem({ label: 'quit', click: function() { app.quit() }}))
+app.on("web-contents-created", (...[, webContents]) => {
+  webContents.on("context-menu", (event, click) => {
+    event.preventDefault()
+    menu.popup(webContents)
+  }, false)
 })
 
-const { autoUpdater } = require('electron-updater')
-if (!isDev) {
-  autoUpdater.addListener('update-available', (event) => {
-    console.log('update-available')
-  })
-  autoUpdater.addListener('update-downloaded', (event, releaseNotes, releaseName, releaseDate, updateURL) => {
-    console.log('update-downloaded')
-    autoUpdater.quitAndInstall()
-  })
-  autoUpdater.addListener('error', (error) => {
-    console.log('error')
-  })
-  autoUpdater.addListener('checking-for-update', (event) => {
-    console.log('checking for updates')
-  })
-  autoUpdater.addListener('update-not-available', (event) => {
-    console.log('update not available')
-  })
-
-  autoUpdater.checkForUpdates()
-}

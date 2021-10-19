@@ -2,11 +2,12 @@
 <html>
   <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self';">
     <title>tiny clock</title>
     <link rel="stylesheet" href="css/app.css">
   </head>
   <body class="theme-dark">
-    <div id="time"></div>
+    <div id="time" onclick="menu()"></div>
   </body>
   <script type="text/javascript" src="js/app.js"></script>
 </html>
