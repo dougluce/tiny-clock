@@ -47,6 +47,7 @@ Options:
     6) More time formats
     7) Start on login
 
+    8) Movable/fixed
 Colors: foreground/background. -- transparent backgorund/foreground
 Rounded Y/N
 
@@ -54,3 +55,5 @@ Rounded Y/N
 "move out of the way to position x, y [relative/absolute toggle] on mouse over for XXX seconds"
 
 Also find a better icon at some point. This one looks like a white circle on the menu bar.
+
+

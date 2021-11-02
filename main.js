@@ -7,13 +7,11 @@ let positioner
 let win
 
 function createWindow () {
-  win = null
   positioner = null
 
   win = new BrowserWindow({
-    width: 120,
+    width: 110,
     height: 24,
-    alwaysOnTop: true,
     frame: false,
     focusable: false,
     fullscreenable: false,
@@ -22,6 +20,7 @@ function createWindow () {
     maximizable: false,
     minimizable: false,
     resizable: false,
+    roundedCorners: false,
     skipTaskbar: true, // false,
     visibleOnAllWorkspaces: true,
     textAreasAreResizable: false,
@@ -33,7 +32,7 @@ function createWindow () {
       devTools: false
     }
   })
-
+  win.setAlwaysOnTop(true, 'pop-up-menu')
   async function positionWin () {
     positioner.move('topRight')
     let [x, y] = win.getPosition()
