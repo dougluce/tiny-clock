@@ -16,7 +16,7 @@ git clone https://github.com/dougluce/tiny-clock.git
 Install dependencies
 
 ```bash
-cd tiny clock && yarn
+cd tiny-clock && yarn
 ```
 
 ### Dev

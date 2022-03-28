@@ -37,10 +37,10 @@
     "dist": "build"
   },
   "devDependencies": {
-    "electron": "^15.2.0",
-    "electron-builder": "^22.13.1",
+    "electron": "^17.2.0",
+    "electron-builder": "^22.14.13",
     "electron-packager": "^15.4.0",
-    "nodemon": "^2.0.14"
+    "nodemon": "^2.0.15"
   },
   "dependencies": {
     "electron-positioner": "^4.1.0",

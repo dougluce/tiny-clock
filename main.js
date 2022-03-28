@@ -61,7 +61,7 @@ let tray
 app.whenReady().then(() => {
   tray = new Tray(path.join(__dirname, 'assets/icons/png/32x32.png'))
   const contextMenu = Menu.buildFromTemplate([
-    { label: 'quit', click: function() { app.quit() }}
+    { label: 'quit', role: 'quit'}
   ])
   tray.setToolTip('tiny clock')
   tray.setContextMenu(contextMenu)
